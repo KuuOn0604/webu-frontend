@@ -8,21 +8,6 @@ import {
   SubmitResult,
 } from '../types/ide';
 
-// Axios instance với timeout dài hơn cho code execution (90s)
-const judgeClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
-  timeout: 90000,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-judgeClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 /** Parse lỗi từ backend thành chuỗi dễ đọc */
 const parseError = (err: unknown): string => {
   if (axios.isAxiosError(err)) {
@@ -64,11 +49,15 @@ export const ideApi = {
     language: Language,
   ): Promise<RunCodeResult> => {
     try {
-      const res = await judgeClient.post<RunCodeResult>('/submissions/run', {
-        card_id: cardId,
-        code,
-        language,
-      });
+      const res = await apiClient.post<RunCodeResult>(
+        '/submissions/run',
+        {
+          card_id: cardId,
+          code,
+          language,
+        },
+        { timeout: 90000 },
+      );
       return res.data;
     } catch (err) {
       throw new Error(parseError(err));
@@ -84,11 +73,15 @@ export const ideApi = {
     language: Language,
   ): Promise<SubmitResult> => {
     try {
-      const res = await judgeClient.post<SubmitResult>('/submissions/submit', {
-        card_id: cardId,
-        submitted_code: submittedCode,
-        language,
-      });
+      const res = await apiClient.post<SubmitResult>(
+        '/submissions/submit',
+        {
+          card_id: cardId,
+          submitted_code: submittedCode,
+          language,
+        },
+        { timeout: 90000 },
+      );
       return res.data;
     } catch (err) {
       throw new Error(parseError(err));
