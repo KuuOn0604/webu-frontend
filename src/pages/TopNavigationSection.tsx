@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Logo2 from '@/components/ui/Logo2';
+import { Logo } from '@/components/ui/Logo';
 import UserIcon from '@/components/ui/UserIcon';
 
 export const TopNavigationSection = (): JSX.Element => {
@@ -86,7 +86,7 @@ export const TopNavigationSection = (): JSX.Element => {
           onClick={() => navigate('/dashboard')}
         >
           <div className="scale-50 origin-center">
-            <Logo2 />
+            <Logo />
           </div>
         </div>
 

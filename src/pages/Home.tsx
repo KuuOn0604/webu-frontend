@@ -1,4 +1,4 @@
-import { Logo2 } from '@/components/ui/Logo2';
+import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import HomePageImage from '@/assets/HomePageImage.png';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ export const Home = (): JSX.Element => {
   return (
     <div className="w-full min-h-screen bg-tonal-a0 px-4 sm:px-8 md:px-16 lg:px-30 py-6 flex flex-col justify-between items-stretch overflow-hidden select-none">
       <header className="self-stretch flex flex-row justify-start items-center gap-3 sm:gap-6 md:gap-10 flex-wrap">
-        <Logo2 />
+        <Logo />
         <span className="text-discovery-a50 text-sm sm:text-base md:h6 lg:h4 font-['Nadoor'] font-bold italic tracking-normal">
           W.E.B.U - Web Engineering of BackKhoa University
         </span>

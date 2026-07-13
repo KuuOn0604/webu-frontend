@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Logo2 from '@/components/ui/Logo2';
+import { Logo } from '@/components/ui/Logo';
 import Tab from '@/components/ui/Tab';
 import UserIcon from '@/components/ui/UserIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -46,7 +46,7 @@ export const MainNavigation = (): JSX.Element => {
           className="flex items-center justify-start px-2 md:px-10 cursor-pointer"
           onClick={() => navigate('/dashboard')}
         >
-          <Logo2 />
+          <Logo />
         </div>
 
         {/* Desktop tab bar — hidden below md */}

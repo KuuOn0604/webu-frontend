@@ -1,15 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import Notebook from './pages/Notebook';
-import Problem from './pages/Problem';
-import SignUp from './pages/SignUp';
-import ForgetPassword from './pages/ForgetPassword';
-import { Survey } from './pages/Survey';
-import Ide from './pages/Ide';
-import { CreateProblem } from './pages/CreateProblem';
-import Stats from './pages/Stats';
-// import CodeDescription from './pages/CodeDescription';
+import Home from '@/pages/Home';
+import Dashboard from '@/pages/Dashboard';
+import Notebook from '@/pages/Notebook';
+import Problem from '@/pages/Problem';
+import SignUp from '@/pages/SignUp';
+import ForgetPassword from '@/pages/ForgetPassword';
+import { Survey } from '@/pages/Survey';
+import Ide from '@/pages/Ide';
+import { CreateProblem } from '@/pages/CreateProblem';
+import Stats from '@/pages/Stats';
 
 function App() {
   return (

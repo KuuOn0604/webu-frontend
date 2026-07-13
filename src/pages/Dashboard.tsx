@@ -6,6 +6,7 @@ import { Review } from '@/components/ui/Review';
 import { GenerateProblem } from '@/components/dashboard/GenerateProblem';
 import { problemApi } from '@/api/problemService';
 import apiClient from '@/api/apiClient';
+import { useAuth } from '@/contexts/AuthContext/useAuth';
 
 interface DueProblem {
   card_id:
@@ -29,18 +30,8 @@ interface DashboardCard {
   created_by?: string;
 }
 
-const getUserIdFromToken = (): string | undefined => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    if (!token) return undefined;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return (payload as { sub?: string }).sub;
-  } catch {
-    return undefined;
-  }
-};
-
-export const Dashboard = (): JSX.Element => {
+const Dashboard = (): JSX.Element => {
+  const { userId } = useAuth();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -57,8 +48,7 @@ export const Dashboard = (): JSX.Element => {
       navigate('/create-problem', {
         state: { aiProblem },
       });
-    } catch (err) {
-      console.error('Error calling AI to extract problem:', err);
+    } catch {
       setAiError(
         'Failed to extract the problem from the image or prompt. Please try again or input manually.',
       );
@@ -69,8 +59,6 @@ export const Dashboard = (): JSX.Element => {
   const [dueProblems, setDueProblems] = useState<DueProblem[]>([]);
   const [notebookProblems, setNotebookProblems] = useState<DashboardCard[]>([]);
   const [isLoadingReview, setIsLoadingReview] = useState(true);
-
-  const userId = getUserIdFromToken();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,8 +90,6 @@ export const Dashboard = (): JSX.Element => {
         // Pick 4 random cards for the notebook suggest
         const shuffled = [...myNotebookCards].sort(() => 0.5 - Math.random());
         setNotebookProblems(shuffled.slice(0, 4));
-      } catch (error) {
-        console.error('Dashboard data loading error:', error);
       } finally {
         setIsLoadingReview(false);
       }
@@ -127,8 +113,7 @@ export const Dashboard = (): JSX.Element => {
       if (problemId) {
         navigate(`/problems/${problemId}`);
       } else {
-        alert('Detecting junk data in the database');
-        console.error('Error data:', firstProblem);
+        return;
       }
     }
   };
