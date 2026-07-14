@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
@@ -16,10 +17,20 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
+  (error: unknown) => {
+    if (
+      error instanceof Object &&
+      'response' in error &&
+      (error as { response?: { status?: number } }).response?.status === 401
+    ) {
       localStorage.removeItem('auth_token');
-      window.location.href = '/signin';
+      toast.error('Phiên đăng nhập đã hết hạn. Đang chuyển hướng...', {
+        duration: 2000,
+      });
+      // Delay redirect để toast kịp hiển thị
+      setTimeout(() => {
+        window.location.href = '/signin';
+      }, 1500);
     }
     return Promise.reject(error);
   },

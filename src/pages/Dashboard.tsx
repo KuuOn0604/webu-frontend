@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Suggest } from '@/components/dashboard/Suggest';
 import { MainNavigation } from '@/components/ui/MainNavigation';
 import { Review } from '@/components/ui/Review';
-import { GenerateProblem } from '@/components/dashboard/GenerateProblem';
+import {
+  GenerateProblem,
+  type GenerateProblemHandle,
+} from '@/components/dashboard/GenerateProblem';
 import { problemApi } from '@/api/problemService';
 import apiClient from '@/api/apiClient';
 import { useAuth } from '@/contexts/AuthContext/useAuth';
@@ -34,24 +38,29 @@ const Dashboard = (): JSX.Element => {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
+  // Ref để gọi reset() trên component con sau khi tạo problem thành công
+  const generateProblemRef = useRef<GenerateProblemHandle>(null);
 
   const handleGenerate = async (prompt: string, imageFile: File | null) => {
     if (!prompt.trim() && !imageFile) return;
 
-    setAiError(null);
     setIsProcessing(true);
 
     try {
       const aiProblem = await problemApi.generateFromAi(prompt, imageFile);
 
+      // Reset ô nhập liệu sau khi AI xử lý xong
+      generateProblemRef.current?.reset();
+
       navigate('/create-problem', {
         state: { aiProblem },
       });
-    } catch {
-      setAiError(
-        'Failed to extract the problem from the image or prompt. Please try again or input manually.',
-      );
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to extract the problem from the image or prompt. Please try again or input manually.';
+      toast.error(message);
     } finally {
       setIsProcessing(false);
     }
@@ -137,13 +146,11 @@ const Dashboard = (): JSX.Element => {
           </h1>
           <div className="w-full flex justify-center items-center mt-5">
             <GenerateProblem
+              ref={generateProblemRef}
               onGenerate={handleGenerate}
               isProcessing={isProcessing}
             />
           </div>
-          {aiError && (
-            <p className="text-danger-a10 text-center mt-3 p7">{aiError}</p>
-          )}
         </div>
         <div
           className="self-stretch flex-1 flex flex-row justify-center items-center py-1 gap-10"

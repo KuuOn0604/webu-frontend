@@ -1,16 +1,27 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {
+  useImperativeHandle,
+  useRef,
+  useState,
+  useEffect,
+  forwardRef,
+} from 'react';
 import { Button } from '@/components/ui/Button';
 
+/** Handle được expose ra ngoài qua ref để trang cha có thể gọi reset */
+export interface GenerateProblemHandle {
+  reset: () => void;
+}
+
 interface GenerateProblemProps {
-  // Callback trả ra text prompt và file ảnh để m dễ dàng gọi API ở trang cha
+  /** Callback trả ra text prompt và file ảnh để trang cha gọi API */
   onGenerate?: (prompt: string, imageFile: File | null) => void;
   isProcessing?: boolean;
 }
 
-export function GenerateProblem({
-  onGenerate,
-  isProcessing = false,
-}: GenerateProblemProps) {
+export const GenerateProblem = forwardRef<
+  GenerateProblemHandle,
+  GenerateProblemProps
+>(function GenerateProblem({ onGenerate, isProcessing = false }, ref) {
   const [prompt, setPrompt] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -20,6 +31,18 @@ export function GenerateProblem({
   // Dùng ref để kích hoạt thẻ input file ẩn khi click vào icon ảnh
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  /** Hàm reset nội bộ: xoá prompt, ảnh đã chọn, preview URL */
+  const handleReset = () => {
+    setPrompt('');
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // Expose hàm reset để trang cha có thể gọi qua ref
+  useImperativeHandle(ref, () => ({ reset: handleReset }));
 
   // Tự động điều chỉnh chiều cao của ô nhập liệu
   useEffect(() => {
@@ -164,28 +187,31 @@ export function GenerateProblem({
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onPaste={handlePaste}
+          disabled={isProcessing}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
               e.preventDefault();
               handleCreate();
             }
           }}
           placeholder="Describe your programming problem or drag/paste an image here..."
-          className="w-full bg-transparent text-white placeholder-neutral-a400 focus:outline-none resize-none min-h-[48px] max-h-[200px] overflow-y-auto font-sans p7 leading-relaxed"
+          className="w-full bg-transparent text-white placeholder-neutral-a400 focus:outline-none resize-none min-h-[48px] max-h-[200px] overflow-y-auto font-sans p7 leading-relaxed disabled:opacity-50 disabled:cursor-not-allowed"
           rows={2}
           style={{ height: 'auto' }}
         />
 
         {/* Bottom bar inside the box */}
         <div className="flex items-center justify-between mt-1">
+          {/* Upload image button - bị disable khi đang xử lý */}
           <button
             type="button"
             onClick={handleImageIconClick}
-            className={`transition-colors cursor-pointer p-1.5 rounded-lg hover:bg-white/5 ${
+            disabled={isProcessing}
+            className={`transition-colors p-1.5 rounded-lg hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed ${
               selectedImage
                 ? 'text-secondary-a70'
                 : 'text-neutral-a400 hover:text-neutral-a200'
-            }`}
+            } ${isProcessing ? '' : 'cursor-pointer'}`}
             title="Upload image"
           >
             <svg
@@ -197,6 +223,7 @@ export function GenerateProblem({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
               <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
@@ -204,13 +231,39 @@ export function GenerateProblem({
             </svg>
           </button>
 
+          {/* Create button với inline Spinner khi đang xử lý */}
           <Button
             type="button"
             isProcessing={isProcessing}
-            className="w-auto px-6 py-2 rounded-full h7 text-sm font-semibold"
+            disabled={isProcessing}
+            className="w-auto px-6 py-2 rounded-full h7 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleCreate}
           >
-            Create
+            {isProcessing ? (
+              <span className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 50 50"
+                  className="h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="25"
+                    cy="25"
+                    r="20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    strokeDasharray="90 150"
+                    strokeDashoffset="-35"
+                  />
+                </svg>
+                Creating...
+              </span>
+            ) : (
+              'Create'
+            )}
           </Button>
         </div>
       </div>
@@ -246,6 +299,8 @@ export function GenerateProblem({
       )}
     </div>
   );
-}
+});
+
+GenerateProblem.displayName = 'GenerateProblem';
 
 export default GenerateProblem;

@@ -86,7 +86,6 @@ export const Survey = (): JSX.Element => {
       setStep(step + 1);
     } else {
       console.log('Survey completed, answers:', selectedOptions);
-      // Proceed to the dashboard after completing the 4th question
       navigate('/dashboard');
     }
   };

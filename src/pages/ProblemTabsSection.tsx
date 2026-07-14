@@ -205,7 +205,7 @@ export const ProblemTabsSection = ({
     toolbar: [
       ['bold', 'italic', 'underline'],
       [{ color: [] }, { background: [] }],
-      [{ align: [] }], // Căn lề
+      [{ align: [] }],
       [{ list: 'bullet' }, { list: 'ordered' }],
     ],
   };

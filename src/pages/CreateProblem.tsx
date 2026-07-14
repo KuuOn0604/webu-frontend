@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Editor, { OnMount } from '@monaco-editor/react';
 import SelectDropdown from '@/components/ui/SelectDropdown';
 import ChipBoard from '@/components/ui/ChipBoard';
 import { Button } from '@/components/ui/Button';
+import OverlayLoader from '@/components/ui/OverlayLoader';
 import type { AiGeneratedProblem } from '@/types/problem';
 import { problemApi } from '@/api/problemService';
 
@@ -30,7 +32,8 @@ export const CreateProblem = (): JSX.Element => {
   const [selectedLang, setSelectedLang] = useState<LanguageType>('cpp');
   const [boilerplate, setBoilerplate] = useState(BOILERPLATE_TEMPLATES);
   const [code, setCode] = useState(BOILERPLATE_TEMPLATES.cpp);
-  const [isProcessing, setIsProcessing] = useState(false);
+  // loadingMessage: chuỗi rỗng nghĩa là không loading; chuỗi có nội dung = đang xử lý
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [courseOptions, setCourseOptions] = useState<string[]>([]);
@@ -164,60 +167,63 @@ export const CreateProblem = (): JSX.Element => {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      alert('Vui lòng điền tên bài tập.');
+      toast.error('Vui lòng điền tên bài tập.');
       return;
     }
     if (!description.trim()) {
-      alert('Vui lòng điền mô tả bài tập.');
+      toast.error('Vui lòng điền mô tả bài tập.');
       return;
     }
 
-    setIsProcessing(true);
+    let testcases: {
+      input: string;
+      expected_output: string;
+      is_hidden: boolean;
+    }[] = [];
+
+    // Bước 1: Gọi AI tạo testcase
+    setLoadingMessage('AI đang tạo testcase...');
     try {
-      let testcases: {
-        input: string;
-        expected_output: string;
-        is_hidden: boolean;
-      }[] = [];
-      try {
-        testcases = await problemApi.generateTestCases(name, description);
-      } catch (aiErr) {
-        console.warn('Lỗi AI generateTestCases:', aiErr);
-        const proceed = window.confirm(
-          'Quá trình tạo testcase tự động bằng AI bị lỗi (có thể do API key Gemini hết lượt sử dụng). Bạn có muốn tiếp tục lưu bài tập này (không kèm testcase) không?',
-        );
-        if (!proceed) {
-          setIsProcessing(false);
-          return;
+      testcases = await problemApi.generateTestCases(name, description);
+    } catch (aiErr) {
+      console.warn('Lỗi AI generateTestCases:', aiErr);
+      toast(
+        'AI không thể tạo testcase. Bài tập sẽ được lưu không kèm testcase.',
+        {
+          icon: '⚠️',
+          duration: 5000,
+        },
+      );
+    }
+
+    // Bước 2: Tách dữ liệu từ Chips
+    const tags: string[] = [];
+    let course = '';
+    let difficulty_level = 'Medium';
+
+    chips.forEach((chip) => {
+      const parts = chip.split(': ');
+      if (parts.length === 2) {
+        const prefix = parts[0];
+        const value = parts[1];
+        if (prefix === 'Tag') {
+          tags.push(value);
+        } else if (prefix === 'Course') {
+          course = value;
+        } else if (prefix === 'Difficulty') {
+          difficulty_level = value;
         }
       }
+    });
 
-      // 2. Tách dữ liệu từ Chips
-      const tags: string[] = [];
-      let course = '';
-      let difficulty_level = 'Medium';
+    const finalBoilerplates = {
+      ...boilerplate,
+      [selectedLang]: code,
+    };
 
-      chips.forEach((chip) => {
-        const parts = chip.split(': ');
-        if (parts.length === 2) {
-          const prefix = parts[0];
-          const value = parts[1];
-          if (prefix === 'Tag') {
-            tags.push(value);
-          } else if (prefix === 'Course') {
-            course = value;
-          } else if (prefix === 'Difficulty') {
-            difficulty_level = value;
-          }
-        }
-      });
-
-      const finalBoilerplates = {
-        ...boilerplate,
-        [selectedLang]: code,
-      };
-
-      // 3. Tạo problem trong DB
+    // Bước 3: Tạo problem trong DB
+    setLoadingMessage('Đang lưu bài tập...');
+    try {
       const savedCard = await problemApi.createProblem({
         title: name,
         difficulty_level: difficulty_level.toLowerCase(),
@@ -228,19 +234,23 @@ export const CreateProblem = (): JSX.Element => {
         testcases,
       });
 
-      // 4. Điều hướng tới IDE của bài tập mới tạo
+      toast.success('Bài tập đã được tạo thành công!');
+
+      // Bước 4: Điều hướng tới IDE của bài tập mới tạo
       const cardId = savedCard._id || savedCard.id;
       navigate(`/problems/${cardId}`);
     } catch (err) {
       console.error('Lỗi khi tạo bài tập:', err);
-      alert('Không thể tạo testcase hoặc lưu bài tập. Vui lòng thử lại.');
+      toast.error('Không thể lưu bài tập. Vui lòng thử lại.');
     } finally {
-      setIsProcessing(false);
+      setLoadingMessage('');
     }
   };
 
   return (
     <div className="w-full min-h-screen bg-tonal-a0 px-30 py-20 flex flex-col justify-between items-stretch overflow-hidden select-none">
+      {/* Overlay khóa màn hình khi đang xử lý tác vụ nặng */}
+      <OverlayLoader isOpen={loadingMessage !== ''} message={loadingMessage} />
       <div className="bg-tonal-a20 w-full rounded-lg flex flex-col px-30 py-10 gap-10 relative">
         <h1 className="text-neutral-a50 h1 text-center tracking-normal leading-tight uppercase">
           CREATING NEW PROBLEM
@@ -337,11 +347,11 @@ export const CreateProblem = (): JSX.Element => {
             Cancel
           </Button>
           <Button
-            isProcessing={isProcessing}
+            isProcessing={loadingMessage !== ''}
             type="button"
             className="w-fit flex items-center justify-center rounded-lg border-2 border-secondary-a70 px-6 py-2 h2 text-center"
             onClick={() => {
-              handleCreate();
+              void handleCreate();
             }}
           >
             Create
