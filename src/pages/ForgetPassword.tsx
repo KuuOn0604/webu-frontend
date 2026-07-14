@@ -42,9 +42,7 @@ export const ForgetPassword = (): JSX.Element => {
     <main className="w-full min-h-screen flex flex-col items-center justify-center bg-[#0a1222] px-4 py-10 select-none">
       {/* Title - Centered */}
       <header className="flex justify-center items-center mb-10">
-        <h1 className="text-[#f2f2f2] text-5xl md:text-6xl [font-family:'HYWenHei-85W',Helvetica] font-normal tracking-[0] leading-[normal]">
-          Forget Password
-        </h1>
+        <h1 className="text-[#f2f2f2] p1 md:h00">Forget Password</h1>
       </header>
 
       {/* Form Container - Centered and Relative wrapper to keep exact absolute coordinates inside */}
@@ -64,9 +62,9 @@ export const ForgetPassword = (): JSX.Element => {
               value={formData.email}
               onChange={handleChange('email')}
               aria-label="Email"
-              className="peer w-full h-full pl-6 pr-6 pt-[18px] pb-2 [font-family:'HYWenHei-85W',Helvetica] font-normal text-neutral-neutral-a50 text-base tracking-[0] leading-[normal] bg-transparent border-0 outline-none caret-secondary-secondary-a70"
+              className="peer w-full h-full pl-6 pr-6 pt-[18px] pb-2 p7 text-neutral-neutral-a50 bg-transparent border-0 outline-none caret-secondary-secondary-a70"
             />
-            <span className="absolute left-6 top-[19px] [font-family:'HYWenHei-85W',Helvetica] font-normal text-neutral-neutral-a50 text-base tracking-[0] leading-[normal] whitespace-nowrap pointer-events-none transition-opacity duration-150 peer-placeholder-shown:opacity-100 opacity-0">
+            <span className="absolute left-6 top-[19px] p7 text-neutral-neutral-a50 whitespace-nowrap pointer-events-none transition-opacity duration-150 peer-placeholder-shown:opacity-100 opacity-0">
               Email
             </span>
           </div>
@@ -85,9 +83,9 @@ export const ForgetPassword = (): JSX.Element => {
               value={formData.verificationCode}
               onChange={handleChange('verificationCode')}
               aria-label="Verification code"
-              className="peer w-full h-full pl-6 pr-6 pt-[18px] pb-2 [font-family:'HYWenHei-85W',Helvetica] font-normal text-neutral-neutral-a50 text-base tracking-[0] leading-[normal] bg-transparent border-0 outline-none caret-secondary-secondary-a70"
+              className="peer w-full h-full pl-6 pr-6 pt-[18px] pb-2 p7 text-neutral-neutral-a50 bg-transparent border-0 outline-none caret-secondary-secondary-a70"
             />
-            <span className="absolute left-6 top-[19px] [font-family:'HYWenHei-85W',Helvetica] font-normal text-neutral-neutral-a50 text-base tracking-[0] leading-[normal] whitespace-nowrap pointer-events-none transition-opacity duration-150 peer-placeholder-shown:opacity-100 opacity-0">
+            <span className="absolute left-6 top-[19px] p7 text-neutral-neutral-a50 whitespace-nowrap pointer-events-none transition-opacity duration-150 peer-placeholder-shown:opacity-100 opacity-0">
               Verification code
             </span>
           </div>
@@ -100,7 +98,7 @@ export const ForgetPassword = (): JSX.Element => {
           className="flex w-[150px] md:w-[155px] h-14 items-center justify-center gap-2.5 p-2.5 absolute top-[116px] right-0 md:left-[555px] bg-[#1d2535] rounded-[10px] shadow-[1px_4px_4px_#0c24ac] cursor-pointer hover:bg-[#283247] transition-colors"
           aria-label="Resend verification code"
         >
-          <span className="relative w-fit [font-family:'HYWenHei-85W',Helvetica] font-normal text-secondary-secondary-a70 text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <span className="relative w-fit p7 text-secondary-secondary-a70 whitespace-nowrap">
             Resend
           </span>
         </button>
@@ -112,7 +110,7 @@ export const ForgetPassword = (): JSX.Element => {
           className="flex w-[118px] h-14 items-center justify-center gap-2.5 p-2.5 absolute top-[232px] left-0 bg-surface-tonal-tonal-a20 rounded-[10px] border border-solid border-secondary-secondary-a70 shadow-[1px_4px_4px_#0c24ac] cursor-pointer hover:bg-surface-tonal-tonal-a30 transition-colors"
           aria-label="Go back"
         >
-          <span className="relative w-fit mt-[-1.00px] [font-family:'HYWenHei-85W',Helvetica] font-normal text-secondary-secondary-a70 text-[28px] tracking-[0] leading-[normal]">
+          <span className="relative w-fit mt-[-1.00px] p4 text-secondary-secondary-a70">
             Back
           </span>
         </button>
@@ -123,7 +121,7 @@ export const ForgetPassword = (): JSX.Element => {
           className="flex w-[179px] h-14 items-center justify-center gap-2.5 p-2.5 absolute top-[229px] right-0 md:left-[531px] bg-surface-tonal-tonal-a20 rounded-[10px] border border-solid border-secondary-secondary-a70 shadow-[1px_4px_4px_#0c24ac] cursor-pointer hover:bg-surface-tonal-tonal-a30 transition-colors"
           aria-label="Continue"
         >
-          <span className="relative w-fit mt-[-1.00px] [font-family:'HYWenHei-85W',Helvetica] font-normal text-secondary-secondary-a70 text-[28px] tracking-[0] leading-[normal]">
+          <span className="relative w-fit mt-[-1.00px] p4 text-secondary-secondary-a70">
             Continue
           </span>
         </button>

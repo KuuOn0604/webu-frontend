@@ -23,7 +23,7 @@ export const Suggest = ({
 
   return (
     <div className="w-full max-w-[580px] min-h-140 p-6 md:p-8 bg-tonal-a20 rounded-[10px] flex flex-col gap-8">
-      <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center w-full gap-8">
         <h2 className="text-secondary-a50 h2 m-0">{title}</h2>
         <div
           className="w-8 h-9 flex items-center justify-center cursor-pointer rounded-sm"

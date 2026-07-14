@@ -162,20 +162,18 @@ export const Ide = (): JSX.Element => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <p className="text-neutral-a300 text-sm">Đang tải bài tập...</p>
+            <p className="text-neutral-a300 p8">Đang tải bài tập...</p>
           </div>
         ) : error ? (
           <div className="flex-1 flex items-center justify-center flex-col gap-4 px-8">
             <div className="text-center max-w-md">
               <div className="text-6xl mb-4">😕</div>
-              <h2 className="text-white text-xl font-bold mb-2">
-                Không tìm thấy bài tập
-              </h2>
-              <p className="text-neutral-a400 text-sm mb-6">{error}</p>
+              <h2 className="text-white h6 mb-2">Không tìm thấy bài tập</h2>
+              <p className="text-neutral-a400 p8 mb-6">{error}</p>
               <button
                 type="button"
                 onClick={() => window.history.back()}
-                className="px-6 py-2 bg-secondary-a90 hover:bg-secondary-a70 text-white font-bold rounded-lg transition-colors cursor-pointer text-sm"
+                className="px-6 py-2 bg-secondary-a90 hover:bg-secondary-a70 text-white h8 rounded-lg transition-colors cursor-pointer"
               >
                 Quay lại
               </button>

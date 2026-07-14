@@ -378,9 +378,7 @@ export const ProblemTabsSection = ({
         {/* Submissions */}
         {activeTab === 'subs' && (
           <div className="h-full overflow-y-auto px-4 py-5 space-y-3 scrollbar-thin">
-            <h2 className="text-white font-semibold text-sm">
-              Submission History
-            </h2>
+            <h2 className="text-white h8">Submission History</h2>
 
             {!userId && (
               <div className="text-center py-16 text-neutral-500 text-sm">
@@ -495,9 +493,7 @@ export const ProblemTabsSection = ({
         {activeTab === 'note' && (
           <div className="h-full flex flex-col px-4 py-5 space-y-4">
             <div className="flex justify-between items-center flex-shrink-0">
-              <h2 className="text-white font-semibold text-sm">
-                Personal Notes
-              </h2>
+              <h2 className="text-white h8">Personal Notes</h2>
               {noteMessage && (
                 <span className="text-emerald-400 text-xs font-medium animate-pulse">
                   {noteMessage}

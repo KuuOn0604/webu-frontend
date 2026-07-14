@@ -103,7 +103,7 @@ export const Survey = (): JSX.Element => {
         {/* Title */}
         <h1
           id={`${groupId}-title`}
-          className="absolute top-[7px] left-[calc(50%_-_120px)] w-[239px] text-center [font-family:'HYWenHei-85W',Helvetica] font-normal text-[#f2f2f2] text-6xl tracking-[0] leading-[normal]"
+          className="absolute top-[7px] left-[calc(50%_-_120px)] w-[239px] text-center h00 text-[#f2f2f2]"
         >
           Survey
         </h1>
@@ -125,7 +125,7 @@ export const Survey = (): JSX.Element => {
         </div>
 
         {/* Question Text */}
-        <p className="absolute w-[calc(100%_-_253px)] top-[271px] left-[120px] [font-family:'HYWenHei-85W',Helvetica] font-normal text-[#8bc5ff] text-2xl tracking-[0] leading-[normal]">
+        <p className="absolute w-[calc(100%_-_253px)] top-[271px] left-[120px] p5 text-[#8bc5ff]">
           Question {step}: {questions[step - 1].text}
         </p>
 
@@ -161,7 +161,7 @@ export const Survey = (): JSX.Element => {
                   className="sr-only"
                 />
                 <RadioIcon checked={checked} />
-                <span className="justify-center w-fit [font-family:'HYWenHei-85W',Helvetica] font-normal text-[#8bc5ff] text-2xl text-center tracking-[0] leading-[normal] flex items-center relative">
+                <span className="justify-center w-fit p5 text-[#8bc5ff] text-center flex items-center relative">
                   {option.label}
                 </span>
               </label>
@@ -176,7 +176,7 @@ export const Survey = (): JSX.Element => {
           className="flex w-[212px] h-12 items-center justify-center gap-2.5 p-2.5 absolute top-[772px] left-[121px] bg-surface-tonal-tonal-a20 rounded-[10px] border border-solid border-secondary-secondary-a70 cursor-pointer hover:bg-surface-tonal-tonal-a30 transition-colors"
           aria-label="Back"
         >
-          <span className="relative w-fit [font-family:'Montserrat-Bold',Helvetica] font-bold text-secondary-secondary-a70 text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+          <span className="relative w-fit h6 text-secondary-secondary-a70 whitespace-nowrap">
             Back
           </span>
         </button>
@@ -188,7 +188,7 @@ export const Survey = (): JSX.Element => {
           className="flex w-[212px] h-12 items-center justify-center gap-2.5 p-2.5 absolute top-[772px] left-[calc(100%_-_333px)] md:left-[485px] bg-surface-tonal-tonal-a20 rounded-[10px] border border-solid border-secondary-secondary-a70 cursor-pointer hover:bg-surface-tonal-tonal-a30 transition-colors"
           aria-label="Next"
         >
-          <span className="relative w-fit [font-family:'Montserrat-Bold',Helvetica] font-bold text-secondary-secondary-a70 text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+          <span className="relative w-fit h6 text-secondary-secondary-a70 whitespace-nowrap">
             {step < 4 ? 'Next' : 'Finish'}
           </span>
         </button>

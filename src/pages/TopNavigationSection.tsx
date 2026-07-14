@@ -95,17 +95,17 @@ export const TopNavigationSection = (): JSX.Element => {
 
         {/* Breadcrumbs — hide problem title on very small screens */}
         <nav
-          className="hidden xs:flex items-center gap-1 sm:gap-2 text-sm min-w-0"
+          className="hidden xs:flex items-center gap-1 sm:gap-2 p8 min-w-0"
           aria-label="Breadcrumb"
         >
           <span
             onClick={() => navigate('/problems')}
-            className="text-neutral-a400 hover:text-secondary-a50 cursor-pointer font-medium transition-colors whitespace-nowrap"
+            className="text-neutral-a400 hover:text-secondary-a50 cursor-pointer transition-colors whitespace-nowrap"
           >
             Problems
           </span>
           <span className="text-neutral-a600">/</span>
-          <span className="text-white font-bold text-sm truncate max-w-[120px] sm:max-w-xs">
+          <span className="text-white h8 truncate max-w-[120px] sm:max-w-xs">
             {getProblemTitle(problemId)}
           </span>
         </nav>
@@ -127,7 +127,7 @@ export const TopNavigationSection = (): JSX.Element => {
           />
         </svg>
 
-        <span className="text-white font-mono font-bold text-lg tracking-wider min-w-[70px]">
+        <span className="text-white ide2 tracking-wider min-w-[70px]">
           {formatTime(seconds)}
         </span>
 
@@ -167,8 +167,8 @@ export const TopNavigationSection = (): JSX.Element => {
       {/* Right Area: Status, Profile and Sign Out */}
       <div className="flex items-center gap-3">
         <div className="hidden md:flex flex-col text-right">
-          <span className="text-white font-semibold text-sm">John Doe</span>
-          <span className="text-success-a0 text-xs font-bold">PRO Member</span>
+          <span className="text-white h8">John Doe</span>
+          <span className="text-success-a0 h8">PRO Member</span>
         </div>
         <UserIcon />
 
@@ -193,7 +193,7 @@ export const TopNavigationSection = (): JSX.Element => {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
             />
           </svg>
-          <span className="hidden sm:inline text-xs font-bold tracking-widest uppercase">
+          <span className="hidden sm:inline h8 tracking-widest uppercase">
             Sign Out
           </span>
         </button>
