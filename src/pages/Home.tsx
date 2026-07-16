@@ -56,21 +56,21 @@ export const Home = (): JSX.Element => {
         <div className="h-12 flex justify-start items-center gap-3 sm:gap-5">
           <div className="w-4 h-3 bg-neutral-a50 rounded-sm" />
           <span className="text-neutral-a50 p9 whitespace-nowrap">
-            discord.gg/webu
+            https://discord.gg/k6M9AZuwS
           </span>
         </div>
 
         <div className="h-12 flex justify-start items-center gap-3 sm:gap-5">
           <div className="w-5 h-4 bg-neutral-a50 rounded-sm" />
           <span className="text-neutral-a50 p9 whitespace-nowrap">
-            webu@gmail.com
+            phamnguyenthienan8.1@gmail.com
           </span>
         </div>
 
         <div className="h-12 flex justify-start items-center gap-3 sm:gap-5">
           <div className="w-2.5 h-4 bg-neutral-a50 rounded-sm" />
           <span className="text-neutral-a50 p9 whitespace-nowrap">
-            facebook.com/webu
+            https://www.facebook.com/skygod.pn.9/
           </span>
         </div>
       </footer>
