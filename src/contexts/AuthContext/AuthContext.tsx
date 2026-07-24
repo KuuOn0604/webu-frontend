@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   }, []);
 
   const value: AuthContextType = {
-    userId: user?.id ?? null,
+    userId: user?.id ?? (user as AuthUser & { _id?: string })?._id ?? null,
     user,
     token,
     isAuthenticated: !!token,

@@ -1,7 +1,9 @@
 import { FormEvent, useId, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { googleLogin, login, register, saveAuthToken } from '@/api/authService';
+import { googleLogin, login, register } from '@/api/authService';
+import { useAuth } from '@/contexts/AuthContext/useAuth';
+import { AuthUser } from '@/contexts/AuthContext/AuthContext';
 import { LinkAccountModal } from '@/components/ui/LinkAccountModal';
 
 type FormField = {
@@ -42,6 +44,7 @@ export const SignUp = (): JSX.Element => {
   const formId = useId();
   const navigate = useNavigate();
   const location = useLocation();
+  const { login: contextLogin } = useAuth();
 
   // Derive active tab directly from URL pathname
   const activeTab = location.pathname.startsWith('/signin')
@@ -99,9 +102,8 @@ export const SignUp = (): JSX.Element => {
       setIsLoading(true);
       try {
         await register(username, email, password);
-        // Auto-login sau khi đăng ký để lấy JWT token
         const loginRes = await login(email, password);
-        saveAuthToken(loginRes.token);
+        contextLogin(loginRes.token, loginRes.user as unknown as AuthUser);
         navigate('/survey');
       } catch (err: unknown) {
         const msg =
@@ -125,7 +127,7 @@ export const SignUp = (): JSX.Element => {
       setIsLoading(true);
       try {
         const res = await login(email, password);
-        saveAuthToken(res.token);
+        contextLogin(res.token, res.user as unknown as AuthUser);
         navigate('/dashboard');
       } catch (err: unknown) {
         const msg =
@@ -159,7 +161,7 @@ export const SignUp = (): JSX.Element => {
 
       if (res.token) {
         // Branch A hoặc C: đăng nhập thành công
-        saveAuthToken(res.token);
+        contextLogin(res.token, res.user as unknown as AuthUser);
         navigate('/dashboard');
       }
     } catch (err: unknown) {
@@ -181,7 +183,7 @@ export const SignUp = (): JSX.Element => {
     try {
       const res = await googleLogin(linkModal.idToken, password);
       if (res.token) {
-        saveAuthToken(res.token);
+        contextLogin(res.token, res.user as unknown as AuthUser);
         setLinkModal({ visible: false, email: '', idToken: '' });
         navigate('/dashboard');
       }

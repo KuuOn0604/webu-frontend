@@ -1,4 +1,3 @@
-// Định nghĩa các hằng số dựa trên Enum của backend
 export type LearningMode = 'long_term' | 'deadline';
 export type ReviewRating = 'easy' | 'good' | 'hard';
 

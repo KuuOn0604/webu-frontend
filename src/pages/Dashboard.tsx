@@ -31,13 +31,23 @@ interface DashboardCard {
   title?: string;
   difficulty_level?: string;
   tags?: string[];
+  /** Serialized ObjectId string from backend JSON response */
   created_by?: string;
 }
 
-const Dashboard = (): JSX.Element => {
+export interface FsrsHistoryItem {
+  card_id: string;
+  state: string;
+  title: string;
+  difficulty_level: string;
+  tags: string[];
+}
+
+export const Dashboard = (): JSX.Element => {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   // Ref để gọi reset() trên component con sau khi tạo problem thành công
   const generateProblemRef = useRef<GenerateProblemHandle>(null);
 
@@ -67,6 +77,7 @@ const Dashboard = (): JSX.Element => {
   };
   const [dueProblems, setDueProblems] = useState<DueProblem[]>([]);
   const [notebookProblems, setNotebookProblems] = useState<DashboardCard[]>([]);
+  const [fsrsHistory, setFsrsHistory] = useState<FsrsHistoryItem[]>([]);
   const [isLoadingReview, setIsLoadingReview] = useState(true);
 
   useEffect(() => {
@@ -76,11 +87,25 @@ const Dashboard = (): JSX.Element => {
         return;
       }
       try {
-        // Fetch due reviews
-        const fsrsResponse = await apiClient.get(
-          `/api/fsrs/due-reviews?userId=${userId}`,
-        );
+        // Ensure daily tasks are initialized for new users
+        try {
+          await apiClient.get('/users/me/daily-tasks');
+        } catch (initError) {
+          console.error('Failed to initialize daily tasks:', initError);
+        }
+
+        // Fetch due reviews and fsrs history
+        const [fsrsResponse, historyResponse] = await Promise.all([
+          apiClient.get(
+            `/api/fsrs/due-reviews?userId=${userId}&_t=${Date.now()}`,
+          ),
+          apiClient.get(`/users/me/fsrs-progress?_t=${Date.now()}`),
+        ]);
+        console.log('DEBUG fsrsResponse:', fsrsResponse.data);
+        console.log('DEBUG historyResponse:', historyResponse.data);
+
         setDueProblems(fsrsResponse.data);
+        setFsrsHistory(historyResponse.data);
 
         // Fetch notebook problems
         const [cardsRes, interactedRes] = await Promise.all([
@@ -89,16 +114,35 @@ const Dashboard = (): JSX.Element => {
         ]);
 
         const allCards: DashboardCard[] = cardsRes.data?.data || [];
-        const interactedSet = new Set(interactedRes.data || []);
+        // interactedRes.data is string[] of card IDs from submissions
+        const interactedSet = new Set<string>(interactedRes.data || []);
 
         const myNotebookCards = allCards.filter((c) => {
-          const id = c.id || c._id;
-          return id && (interactedSet.has(id) || c.created_by === userId);
+          // Mongoose does not expose the `id` virtual by default in API responses;
+          // use `_id` (serialized as string) as the canonical identifier.
+          const id = (c._id || c.id)?.toString();
+          const createdBy = c.created_by?.toString();
+          return id && (interactedSet.has(id) || createdBy === userId);
         });
 
         // Pick 4 random cards for the notebook suggest
         const shuffled = [...myNotebookCards].sort(() => 0.5 - Math.random());
         setNotebookProblems(shuffled.slice(0, 4));
+      } catch (error: unknown) {
+        console.error('Failed to fetch dashboard data:', error);
+
+        // Define a type for axios errors to safely extract the message
+        type AxiosError = {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        const axiosErr = error as AxiosError;
+
+        setErrorMsg(
+          axiosErr?.response?.data?.message ||
+            axiosErr?.message ||
+            String(error),
+        );
       } finally {
         setIsLoadingReview(false);
       }
@@ -132,12 +176,18 @@ const Dashboard = (): JSX.Element => {
       <header className="self-stretch flex flex-row justify-start gap-10 sticky top-0 z-10">
         <MainNavigation />
       </header>
+      {errorMsg && (
+        <div className="w-full bg-danger-a20 text-white p-4 text-center">
+          <p className="font-bold">LỖI FETCH DATA: {errorMsg}</p>
+        </div>
+      )}
       <div className="w-full min-h-screen bg-tonal-a10 px-4 sm:px-8 md:px-12 lg:px-20 py-5 flex flex-col justify-between items-stretch overflow-hidden select-none gap-6 md:gap-10">
         <div className="w-full relative bg-tonal-a20 rounded-[20px] overflow-hidden px-4 sm:px-8 md:px-12 lg:px-20 py-5 flex flex-col justify-between items-stretch gap-6 md:gap-10">
           <Review
             reviewCount={dueProblems.length}
             isLoading={isLoadingReview}
             onStart={handleStartReview}
+            completedHistory={fsrsHistory.filter((p) => p.state !== 'new')}
           />
         </div>
         <div>

@@ -54,7 +54,9 @@ export const Notebook = (): JSX.Element => {
         const now = new Date();
 
         const interactedCardIds = new Set([
-          ...fsrsProgress.map((item: { card_id: string }) => item.card_id),
+          ...fsrsProgress
+            .filter((item: { state?: string }) => item.state !== 'new')
+            .map((item: { card_id: string }) => item.card_id),
           ...interacted,
         ]);
 

@@ -28,11 +28,9 @@ export const GenerateProblem = forwardRef<
   const [isDragOver, setIsDragOver] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Dùng ref để kích hoạt thẻ input file ẩn khi click vào icon ảnh
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  /** Hàm reset nội bộ: xoá prompt, ảnh đã chọn, preview URL */
   const handleReset = () => {
     setPrompt('');
     if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -41,10 +39,8 @@ export const GenerateProblem = forwardRef<
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // Expose hàm reset để trang cha có thể gọi qua ref
   useImperativeHandle(ref, () => ({ reset: handleReset }));
 
-  // Tự động điều chỉnh chiều cao của ô nhập liệu
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -62,7 +58,6 @@ export const GenerateProblem = forwardRef<
     if (file) {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
       setSelectedImage(file);
-      // Tạo URL xem trước ảnh tạm thời
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -75,7 +70,6 @@ export const GenerateProblem = forwardRef<
   };
 
   const handleCreate = () => {
-    // Không gõ prompt cũng không up ảnh thì không làm gì cả
     if (!prompt.trim() && !selectedImage) return;
 
     if (onGenerate) {
