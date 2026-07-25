@@ -104,7 +104,10 @@ export const Dashboard = (): JSX.Element => {
         console.log('DEBUG fsrsResponse:', fsrsResponse.data);
         console.log('DEBUG historyResponse:', historyResponse.data);
 
-        setDueProblems(fsrsResponse.data);
+        const validDueProblems = Array.isArray(fsrsResponse.data)
+          ? fsrsResponse.data.filter((p: DueProblem) => p && p.card_id)
+          : [];
+        setDueProblems(validDueProblems);
         setFsrsHistory(historyResponse.data);
 
         // Fetch notebook problems
@@ -152,21 +155,22 @@ export const Dashboard = (): JSX.Element => {
 
   const handleStartReview = () => {
     if (dueProblems.length > 0) {
-      const firstProblem = dueProblems[0] as {
-        card_id?: string | { id?: string; _id?: string };
-      };
+      const validProblem = dueProblems.find((p) => {
+        const rawCardId = p?.card_id;
+        if (typeof rawCardId === 'object' && rawCardId !== null) {
+          return rawCardId.id || rawCardId._id;
+        }
+        return typeof rawCardId === 'string' && rawCardId !== '';
+      });
 
-      const rawCardId = firstProblem?.card_id;
+      if (validProblem) {
+        const rawCardId = validProblem.card_id;
+        const problemId =
+          typeof rawCardId === 'object' && rawCardId !== null
+            ? rawCardId.id || rawCardId._id
+            : rawCardId;
 
-      const problemId =
-        typeof rawCardId === 'object' && rawCardId !== null
-          ? rawCardId.id || rawCardId._id
-          : rawCardId;
-
-      if (problemId) {
         navigate(`/problems/${problemId}`);
-      } else {
-        return;
       }
     }
   };
